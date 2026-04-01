@@ -39,7 +39,7 @@ import PageNotFound from './generic/PageNotFound';
 
 subscribe(APP_READY, () => {
   const root = createRoot(document.getElementById('root'));
-
+  console.log("Index.jsx WORKS☑️☑️☑️");
   root.render(
     <StrictMode>
       <AppProvider store={store}>
