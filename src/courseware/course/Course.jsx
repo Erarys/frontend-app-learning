@@ -20,7 +20,6 @@ import { CourseOutlineMobileSidebarTriggerSlot } from '../../plugin-slots/Course
 import { CourseBreadcrumbsSlot } from '../../plugin-slots/CourseBreadcrumbsSlot';
 
 const Course = ({
-  console.log("Course.jsx WORKS👑👑👑");
   courseId,
   sequenceId,
   unitId,
@@ -29,6 +28,7 @@ const Course = ({
   unitNavigationHandler,
   windowWidth,
 }) => {
+  console.log("Course.jsx WORKS👑👑👑");
   const course = useModel('coursewareMeta', courseId);
   const {
     celebrations,
