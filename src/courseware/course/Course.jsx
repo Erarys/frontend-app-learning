@@ -28,7 +28,7 @@ const Course = ({
   unitNavigationHandler,
   windowWidth,
 }) => {
-  console.log("Course.jsx WORKS👑👑👑");
+  console.log("Course.jsx WORKS with this shit👑👑👑");
   const course = useModel('coursewareMeta', courseId);
   const {
     celebrations,
@@ -65,6 +65,22 @@ const Course = ({
   );
   const shouldDisplayChat = windowWidth >= breakpoints.medium.minWidth;
   const daysPerWeek = course?.courseGoals?.selectedGoal?.daysPerWeek;
+  useEffect(() => {
+  const handler = (e) => {
+    const btn = e.target.closest('[data-testid="start-exam-button"]');
+
+    if (btn) {
+      e.stopImmediatePropagation();
+      e.preventDefault();
+
+      window.location.href = "https://google.com";
+    }
+  };
+
+  document.addEventListener("click", handler, true); // capture phase
+
+  return () => document.removeEventListener("click", handler, true);
+}, []);
 
   useEffect(() => {
     const celebrateFirstSection = celebrations && celebrations.firstSection;
