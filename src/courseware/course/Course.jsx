@@ -69,7 +69,7 @@ const Course = ({
   const daysPerWeek = course?.courseGoals?.selectedGoal?.daysPerWeek;
   // Начало скрипта
  useEffect(() => {
-  const interval = setInterval(() => {
+  const observer = new MutationObserver(() => {
     const btn = document.querySelector('[data-testid="start-exam-button"]');
 
     if (btn && !btn.dataset.hooked) {
@@ -77,24 +77,34 @@ const Course = ({
 
       console.log("HOOKED BUTTON ✅");
 
-      btn.onclick = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
+      btn.addEventListener(
+        "click",
+        (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation(); // 🔥 ВАЖНО
 
-        console.log("REDIRECT TO PROCTORING 🚀");
+          console.log("REDIRECT TO PROCTORING 🚀");
 
-        const params = new URLSearchParams({
-          user_id: '0',
-          username: 'unknown',
-          unit_url: window.location.href + '?start_exam=1',
-        });
+          const url = new URL(window.location.href);
+          url.searchParams.set("start_exam", "1");
 
-        window.location.href = `/go-to-exam/?${params.toString()}`;
-      };
+          const params = new URLSearchParams({
+            user_id: exam?.user_id || "0",
+            username: exam?.username || "unknown",
+            unit_url: url.toString(),
+          });
+
+          window.location.href = `/go-to-exam/?${params.toString()}`;
+        },
+        true // 🔥 capture phase
+      );
     }
-  }, 500);
+  });
 
-  return () => clearInterval(interval);
+  observer.observe(document.body, { childList: true, subtree: true });
+
+  return () => observer.disconnect();
 }, [exam]);
   // Конец скрипта
 
