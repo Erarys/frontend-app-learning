@@ -68,29 +68,17 @@ const Course = ({
   const shouldDisplayChat = windowWidth >= breakpoints.medium.minWidth;
   const daysPerWeek = course?.courseGoals?.selectedGoal?.daysPerWeek;
 
-  // Exam start
-  useEffect(() => {
-  const params = new URLSearchParams(window.location.search);
 
-  if (params.get('start_exam') === '1') {
-    console.log("🔥 Auto starting exam...");
-
-    const tryStart = () => {
-      if (sequence) {
-        dispatch(startTimedExam());
-
-        window.history.replaceState({}, '', window.location.pathname);
-      } else {
-        console.log("⏳ Waiting for sequence...");
-        setTimeout(tryStart, 300);
-      }
-    };
-
-    tryStart();
-  }
-}, [sequence]);
   // Начало скрипта
  useEffect(() => {
+  const params = new URLSearchParams(window.location.search);
+
+  // ❌ если уже вернулись с прокторинга — НЕ перехватываем
+  if (params.get('start_exam') === '1') {
+    console.log("⛔ Skip interception (return from proctoring)");
+    return;
+  }
+
   const observer = new MutationObserver(() => {
     const btn = document.querySelector('[data-testid="start-exam-button"]');
 
@@ -104,7 +92,7 @@ const Course = ({
         (e) => {
           e.preventDefault();
           e.stopPropagation();
-          e.stopImmediatePropagation(); // 🔥 ВАЖНО
+          e.stopImmediatePropagation();
 
           console.log("REDIRECT TO PROCTORING 🚀");
 
@@ -119,7 +107,7 @@ const Course = ({
 
           window.location.href = `http://local.openedx.io/go-to-exam/?${params.toString()}`;
         },
-        true // 🔥 capture phase
+        true
       );
     }
   });
