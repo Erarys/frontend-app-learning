@@ -20,7 +20,6 @@ import { CourseOutlineMobileSidebarTriggerSlot } from '../../plugin-slots/Course
 import { CourseBreadcrumbsSlot } from '../../plugin-slots/CourseBreadcrumbsSlot';
 
 import { useCallback } from 'react';
-import { useElementEventListener } from '@edx/frontend-platform';
 
 const Course = ({
   courseId,
@@ -31,7 +30,7 @@ const Course = ({
   unitNavigationHandler,
   windowWidth,
 }) => {
-  console.log("Course.jsx WORKS with new code HELLO👑👑👑");
+  console.log("Course.jsx WORKS with new code NoneStop👑👑👑");
   const course = useModel('coursewareMeta', courseId);
   const {
     celebrations,
@@ -68,21 +67,27 @@ const Course = ({
   );
   const shouldDisplayChat = windowWidth >= breakpoints.medium.minWidth;
   const daysPerWeek = course?.courseGoals?.selectedGoal?.daysPerWeek;
-  const redirectToCustomExam = useCallback((event) => {
-  event.preventDefault();
-  event.stopPropagation();
-  event.stopImmediatePropagation();
+  # Начало скрипта
+  useEffect(() => {
+  const handler = (e) => {
+    const btn = e.target.closest('[data-testid="start-exam-button"]');
 
-  console.log("REDIRECT 🚀");
+    if (btn) {
+      console.log("INTERCEPTED ✅");
 
-  window.location.href = "https://google.com";
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+
+      window.location.href = "https://google.com";
+    }
+  };
+
+  document.addEventListener("click", handler, true);
+
+  return () => document.removeEventListener("click", handler, true);
 }, []);
-
-useElementEventListener(
-  'click',
-  '[data-testid="start-exam-button"]',
-  redirectToCustomExam
-);
+  # Конец скрипта
 
   useEffect(() => {
     const celebrateFirstSection = celebrations && celebrations.firstSection;
