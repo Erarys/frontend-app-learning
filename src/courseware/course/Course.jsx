@@ -20,7 +20,7 @@ import { CourseOutlineMobileSidebarTriggerSlot } from '../../plugin-slots/Course
 import { CourseBreadcrumbsSlot } from '../../plugin-slots/CourseBreadcrumbsSlot';
 
 import { useCallback } from 'react';
-import { useElementEventListener } from '@edx/frontend-platform ';
+import { useElementEventListener } from '@edx/frontend-platform';
 
 const Course = ({
   courseId,
