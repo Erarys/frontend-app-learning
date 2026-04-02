@@ -67,18 +67,28 @@ const Course = ({
   );
   const shouldDisplayChat = windowWidth >= breakpoints.medium.minWidth;
   const daysPerWeek = course?.courseGoals?.selectedGoal?.daysPerWeek;
+
+  // Exam start
   useEffect(() => {
   const params = new URLSearchParams(window.location.search);
 
   if (params.get('start_exam') === '1') {
     console.log("🔥 Auto starting exam...");
 
-    dispatch(startTimedExam());
+    const tryStart = () => {
+      if (sequence) {
+        dispatch(startTimedExam());
 
-    // очистить URL чтобы не зацикливалось
-    window.history.replaceState({}, '', window.location.pathname);
+        window.history.replaceState({}, '', window.location.pathname);
+      } else {
+        console.log("⏳ Waiting for sequence...");
+        setTimeout(tryStart, 300);
+      }
+    };
+
+    tryStart();
   }
-}, []);
+}, [sequence]);
   // Начало скрипта
  useEffect(() => {
   const observer = new MutationObserver(() => {
