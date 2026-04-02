@@ -68,7 +68,7 @@ const Course = ({
   const shouldDisplayChat = windowWidth >= breakpoints.medium.minWidth;
   const daysPerWeek = course?.courseGoals?.selectedGoal?.daysPerWeek;
   // Начало скрипта
-  useEffect(() => {
+ useEffect(() => {
   const interval = setInterval(() => {
     const btn = document.querySelector('[data-testid="start-exam-button"]');
 
@@ -78,18 +78,24 @@ const Course = ({
       console.log("HOOKED BUTTON ✅");
 
       btn.onclick = (e) => {
-        console.log("FORCED REDIRECT 🚀");
-
         e.preventDefault();
         e.stopPropagation();
 
-        window.location.href = "https://google.com";
+        console.log("REDIRECT TO PROCTORING 🚀");
+
+        const params = new URLSearchParams({
+          user_id: exam?.user_id || '0',
+          username: exam?.username || 'unknown',
+          unit_url: window.location.href + '?start_exam=1',
+        });
+
+        window.location.href = `/go-to-exam/?${params.toString()}`;
       };
     }
   }, 500);
 
   return () => clearInterval(interval);
-}, []);
+}, [exam]);
   // Конец скрипта
 
   useEffect(() => {
