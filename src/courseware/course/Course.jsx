@@ -19,6 +19,9 @@ import Sequence from './sequence';
 import { CourseOutlineMobileSidebarTriggerSlot } from '../../plugin-slots/CourseOutlineMobileSidebarTriggerSlot';
 import { CourseBreadcrumbsSlot } from '../../plugin-slots/CourseBreadcrumbsSlot';
 
+import { useCallback } from 'react';
+import { useElementEventListener } from '@openedx/frontend-platform';
+
 const Course = ({
   courseId,
   sequenceId,
@@ -65,22 +68,21 @@ const Course = ({
   );
   const shouldDisplayChat = windowWidth >= breakpoints.medium.minWidth;
   const daysPerWeek = course?.courseGoals?.selectedGoal?.daysPerWeek;
-  useEffect(() => {
-  const handler = (e) => {
-    const btn = e.target.closest('[data-testid="start-exam-button"]');
+  const redirectToCustomExam = useCallback((event) => {
+  event.preventDefault();
+  event.stopPropagation();
+  event.stopImmediatePropagation();
 
-    if (btn) {
-      e.stopImmediatePropagation();
-      e.preventDefault();
+  console.log("REDIRECT 🚀");
 
-      window.location.href = "https://google.com";
-    }
-  };
-
-  document.addEventListener("click", handler, true); // capture phase
-
-  return () => document.removeEventListener("click", handler, true);
+  window.location.href = "https://google.com";
 }, []);
+
+useElementEventListener(
+  'click',
+  '[data-testid="start-exam-button"]',
+  redirectToCustomExam
+);
 
   useEffect(() => {
     const celebrateFirstSection = celebrations && celebrations.firstSection;
