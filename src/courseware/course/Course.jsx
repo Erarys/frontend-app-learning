@@ -69,23 +69,26 @@ const Course = ({
   const daysPerWeek = course?.courseGoals?.selectedGoal?.daysPerWeek;
   // Начало скрипта
   useEffect(() => {
-  const handler = (e) => {
-    const btn = e.target.closest('[data-testid="start-exam-button"]');
+  const interval = setInterval(() => {
+    const btn = document.querySelector('[data-testid="start-exam-button"]');
 
-    if (btn) {
-      console.log("INTERCEPTED ✅");
+    if (btn && !btn.dataset.hooked) {
+      btn.dataset.hooked = "true";
 
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
+      console.log("HOOKED BUTTON ✅");
 
-      window.location.href = "https://google.com";
+      btn.onclick = (e) => {
+        console.log("FORCED REDIRECT 🚀");
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        window.location.href = "https://google.com";
+      };
     }
-  };
+  }, 500);
 
-  document.addEventListener("click", handler, true);
-
-  return () => document.removeEventListener("click", handler, true);
+  return () => clearInterval(interval);
 }, []);
   // Конец скрипта
 
