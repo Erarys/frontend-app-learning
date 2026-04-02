@@ -95,7 +95,7 @@ const Course = ({
             unit_url: url.toString(),
           });
 
-          window.location.href = `/go-to-exam/?${params.toString()}`;
+          window.location.href = `http://local.openedx.io/go-to-exam/?${params.toString()}`;
         },
         true // 🔥 capture phase
       );
