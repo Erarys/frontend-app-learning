@@ -84,8 +84,8 @@ const Course = ({
         console.log("REDIRECT TO PROCTORING 🚀");
 
         const params = new URLSearchParams({
-          user_id: exam?.user_id || '0',
-          username: exam?.username || 'unknown',
+          user_id: '0',
+          username: 'unknown',
           unit_url: window.location.href + '?start_exam=1',
         });
 
