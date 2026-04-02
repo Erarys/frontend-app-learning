@@ -67,6 +67,18 @@ const Course = ({
   );
   const shouldDisplayChat = windowWidth >= breakpoints.medium.minWidth;
   const daysPerWeek = course?.courseGoals?.selectedGoal?.daysPerWeek;
+  useEffect(() => {
+  const params = new URLSearchParams(window.location.search);
+
+  if (params.get('start_exam') === '1') {
+    console.log("🔥 Auto starting exam...");
+
+    dispatch(startTimedExam());
+
+    // очистить URL чтобы не зацикливалось
+    window.history.replaceState({}, '', window.location.pathname);
+  }
+}, []);
   // Начало скрипта
  useEffect(() => {
   const observer = new MutationObserver(() => {
