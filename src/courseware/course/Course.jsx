@@ -31,7 +31,7 @@ const Course = ({
   unitNavigationHandler,
   windowWidth,
 }) => {
-  console.log("Course.jsx WORKS with new code 👑👑👑");
+  console.log("Course.jsx WORKS with new code HELLO👑👑👑");
   const course = useModel('coursewareMeta', courseId);
   const {
     celebrations,
