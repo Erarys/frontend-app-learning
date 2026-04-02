@@ -105,7 +105,7 @@ const Course = ({
   observer.observe(document.body, { childList: true, subtree: true });
 
   return () => observer.disconnect();
-}, [exam]);
+}, []);
   // Конец скрипта
 
   useEffect(() => {
