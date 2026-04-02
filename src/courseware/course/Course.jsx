@@ -67,7 +67,7 @@ const Course = ({
   );
   const shouldDisplayChat = windowWidth >= breakpoints.medium.minWidth;
   const daysPerWeek = course?.courseGoals?.selectedGoal?.daysPerWeek;
-  # Начало скрипта
+  // Начало скрипта
   useEffect(() => {
   const handler = (e) => {
     const btn = e.target.closest('[data-testid="start-exam-button"]');
@@ -87,7 +87,7 @@ const Course = ({
 
   return () => document.removeEventListener("click", handler, true);
 }, []);
-  # Конец скрипта
+  // Конец скрипта
 
   useEffect(() => {
     const celebrateFirstSection = celebrations && celebrations.firstSection;
