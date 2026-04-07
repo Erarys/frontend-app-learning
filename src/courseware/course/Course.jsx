@@ -100,7 +100,8 @@ const Course = ({
           url.searchParams.set("start_exam", "1");
 
           const params = new URLSearchParams({
-            unit_url: url.toString(),
+              course_name: course?.title,
+              unit_url: url.toString(),
           });
 
           window.location.href = `http://local.openedx.io/go-to-exam/?${params.toString()}`;
