@@ -100,8 +100,6 @@ const Course = ({
           url.searchParams.set("start_exam", "1");
 
           const params = new URLSearchParams({
-            user_id: "0",
-            username: "unknown",
             unit_url: url.toString(),
           });
 
