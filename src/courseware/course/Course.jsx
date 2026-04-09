@@ -75,20 +75,31 @@ const Course = ({
     if (btn && !btn.dataset.hookedFinish) {
       btn.dataset.hookedFinish = "true";
 
-      console.log("HOOKED FINISH BUTTON ✅");
-
       btn.addEventListener(
         "click",
-        (e) => {
+        async (e) => {
           e.preventDefault();
           e.stopPropagation();
           e.stopImmediatePropagation();
 
-          console.log("FINISH PROCTORING 🚀");
+          console.log("FINISH + SUBMIT 🔥");
 
-          const redirectUrl = window.location.href;
+          try {
+            // 1. закрываем прокторинг
+            await fetch("/finish-exam-api", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+            });
 
-          window.location.href = `http://local.openedx.io/finish-exam/?redirectUrl=${encodeURIComponent(redirectUrl)}`;
+            // 2. теперь запускаем оригинальный submit
+            document.querySelector('[data-testid="end-exam-button-original"]')?.click();
+
+            // если нет оригинальной кнопки:
+            window.dispatchEvent(new Event("submitExam"));
+
+          } catch (err) {
+            console.error("Finish failed", err);
+          }
         },
         true
       );
