@@ -86,7 +86,7 @@ const Course = ({
 
           try {
             // 1. закрываем прокторинг
-            await fetch("/finish-exam-api", {
+            await fetch("http://local.openedx.io/finish-exam-api", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
             });
