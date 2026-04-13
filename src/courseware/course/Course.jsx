@@ -84,7 +84,7 @@ const Course = ({
 
         // даём submitExam выполниться
         setTimeout(() => {
-          window.location.href = `http://local.openedx.io/finish-exam/?redirectUrl=${encodeURIComponent(redirectUrl)}`;
+          window.location.href = `https://open.kaznu.kz/finish-exam/?redirectUrl=${encodeURIComponent(redirectUrl)}`;
         }, 1500);
       });
     }
@@ -131,7 +131,7 @@ const Course = ({
               unit_url: url.toString(),
           });
 
-          window.location.href = `http://local.openedx.io/go-to-exam/?${params.toString()}`;
+          window.location.href = `https://open.kaznu.kz/go-to-exam/?${params.toString()}`;
         },
         true
       );
