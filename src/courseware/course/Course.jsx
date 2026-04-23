@@ -131,7 +131,7 @@ const Course = ({
               unit_url: url.toString(),
           });
 
-          window.location.href = `https://open.kaznu.kz/go-to-exam/?${params.toString()}`;
+          window.location.href = `http://local.openedx.io/go-to-exam/?${params.toString()}`;
         },
         true
       );
