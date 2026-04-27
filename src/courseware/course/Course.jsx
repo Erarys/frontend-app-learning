@@ -78,17 +78,13 @@ const Course = ({
       console.log("HOOKED FINISH BUTTON ✅");
 
       btn.addEventListener("click", () => {
-        const params = new URLSearchParams(window.location.search);
-        const sessionId = params.get("session_id");
-
-        console.log("SESSION FROM URL:", sessionId);
         console.log("FINISH PROCTORING 🚀");
 
         const redirectUrl = window.location.href;
 
         // даём submitExam выполниться
         setTimeout(() => {
-          window.location.href = `http://local.openedx.io/finish-exam/?session_id=${sessionId}&redirectUrl=${encodeURIComponent(redirectUrl)}`;
+          window.location.href = `http://local.openedx.io/finish-exam/?redirectUrl=${encodeURIComponent(redirectUrl)}`;
         }, 1500);
       });
     }
