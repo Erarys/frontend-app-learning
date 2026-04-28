@@ -102,7 +102,6 @@ const Course = ({
 // === EXAM GUARD START ===
 
 const location = useLocation();
-const navigate = useNavigate();
 
 // определяем активность экзамена
 const isExamActive =
