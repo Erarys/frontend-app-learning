@@ -99,9 +99,76 @@ const Course = ({
 
   return () => observer.disconnect();
 }, []);
-  // Завершение экзамена
+// === EXAM GUARD START ===
 
-  // Начало скрипта
+const location = useLocation();
+const navigate = useNavigate();
+
+// определяем активность экзамена
+const isExamActive =
+  new URLSearchParams(location.search).get('start_exam') === '1';
+
+// 🔒 1. Блок кликов по навигации
+useEffect(() => {
+  if (!isExamActive) return;
+
+  const blockNavigation = (e) => {
+    const link = e.target.closest('a');
+
+    if (!link) return;
+
+    // разрешаем только ссылки внутри текущего sequential
+    if (!link.href.includes(sequenceId)) {
+      e.preventDefault();
+      e.stopPropagation();
+      console.log("🚫 Navigation click blocked");
+    }
+  };
+
+  document.addEventListener('click', blockNavigation, true);
+
+  return () => {
+    document.removeEventListener('click', blockNavigation, true);
+  };
+}, [isExamActive, sequenceId]);
+
+// 🔁 2. Контроль URL (если пользователь ушёл)
+useEffect(() => {
+  if (!isExamActive) return;
+
+  const path = location.pathname;
+
+  const match = path.match(/type@sequential\+block@([a-z0-9]+)/);
+  if (!match) return;
+
+  const currentSequential = match[1];
+
+  if (currentSequential !== sequenceId) {
+    console.log("🚫 Redirecting back to exam");
+
+    // возвращаем назад (текущий unit)
+    navigate(path, { replace: true });
+  }
+}, [location.pathname, isExamActive, sequenceId]);
+
+// 🔙 3. Блок кнопки "назад"
+useEffect(() => {
+  if (!isExamActive) return;
+
+  const handlePopState = () => {
+    console.log("🚫 Back button blocked");
+
+    navigate(location.pathname, { replace: true });
+  };
+
+  window.addEventListener('popstate', handlePopState);
+
+  return () => {
+    window.removeEventListener('popstate', handlePopState);
+  };
+}, [isExamActive, location.pathname]);
+
+// === EXAM GUARD END ===
  useEffect(() => {
   const params = new URLSearchParams(window.location.search);
 
