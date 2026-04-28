@@ -45,6 +45,11 @@ const Course = ({
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
+  const section_name = [
+  section?.title,
+  sequence?.title,
+].filter(Boolean).join(' ');
+
   if (!originalUserIsStaff && pathname.startsWith('/preview')) {
     const courseUrl = pathname.replace('/preview', '');
     navigate(courseUrl, { replace: true });
@@ -129,6 +134,7 @@ const Course = ({
           const params = new URLSearchParams({
               course_name: course?.title,
               unit_url: url.toString(),
+              section_name: section_name
           });
 
           window.location.href = `http://local.openedx.io/go-to-exam/?${params.toString()}`;
