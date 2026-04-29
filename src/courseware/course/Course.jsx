@@ -73,32 +73,32 @@ const Course = ({
   const shouldDisplayChat = windowWidth >= breakpoints.medium.minWidth;
   const daysPerWeek = course?.courseGoals?.selectedGoal?.daysPerWeek;
   // Завершение экзамена
-  useEffect(() => {
-  const observer = new MutationObserver(() => {
-    const btn = document.querySelector('[data-testid="end-exam-button"]');
-
-    if (btn && !btn.dataset.hookedFinish) {
-      btn.dataset.hookedFinish = "true";
-
-      console.log("HOOKED FINISH BUTTON ✅");
-
-      btn.addEventListener("click", () => {
-        console.log("FINISH PROCTORING 🚀");
-
-        const redirectUrl = window.location.href;
-
-        // даём submitExam выполниться
-        setTimeout(() => {
-          window.location.href = `http://local.openedx.io/finish-exam/?redirectUrl=${encodeURIComponent(redirectUrl)}`;
-        }, 1500);
-      });
-    }
-  });
-
-  observer.observe(document.body, { childList: true, subtree: true });
-
-  return () => observer.disconnect();
-}, []);
+//   useEffect(() => {
+//   const observer = new MutationObserver(() => {
+//     const btn = document.querySelector('[data-testid="end-exam-button"]');
+//
+//     if (btn && !btn.dataset.hookedFinish) {
+//       btn.dataset.hookedFinish = "true";
+//
+//       console.log("HOOKED FINISH BUTTON ✅");
+//
+//       btn.addEventListener("click", () => {
+//         console.log("FINISH PROCTORING 🚀");
+//
+//         const redirectUrl = window.location.href;
+//
+//         // даём submitExam выполниться
+//         setTimeout(() => {
+//           window.location.href = `http://local.openedx.io/finish-exam/?redirectUrl=${encodeURIComponent(redirectUrl)}`;
+//         }, 1500);
+//       });
+//     }
+//   });
+//
+//   observer.observe(document.body, { childList: true, subtree: true });
+//
+//   return () => observer.disconnect();
+// }, []);
 // === EXAM GUARD START ===
 
 const location = useLocation();
