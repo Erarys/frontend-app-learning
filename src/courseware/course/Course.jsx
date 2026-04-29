@@ -168,53 +168,53 @@ useEffect(() => {
 }, [isExamActive, location.pathname]);
 
 // === EXAM GUARD END ===
- useEffect(() => {
-  const params = new URLSearchParams(window.location.search);
-
-  // ❌ если уже вернулись с прокторинга — НЕ перехватываем
-  if (params.get('start_exam') === '1') {
-    console.log("⛔ Skip interception (return from proctoring)");
-    return;
-  }
-
-  const observer = new MutationObserver(() => {
-    const btn = document.querySelector('[data-testid="start-exam-button"]');
-
-    if (btn && !btn.dataset.hooked) {
-      btn.dataset.hooked = "true";
-
-      console.log("HOOKED BUTTON ✅");
-
-      btn.addEventListener(
-        "click",
-        (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          e.stopImmediatePropagation();
-
-          console.log("REDIRECT TO PROCTORING 🚀");
-
-          const url = new URL(window.location.href);
-          url.searchParams.set("start_exam", "1");
-
-          const params = new URLSearchParams({
-              course_name: course?.title,
-              unit_url: url.toString(),
-              section_name: section_name
-          });
-
-          window.location.href = `http://local.openedx.io/go-to-exam/?${params.toString()}`;
-        },
-        true
-      );
-    }
-  });
-
-  observer.observe(document.body, { childList: true, subtree: true });
-
-  return () => observer.disconnect();
-}, []);
-  // Конец скрипта
+//  useEffect(() => {
+//   const params = new URLSearchParams(window.location.search);
+//
+//   // ❌ если уже вернулись с прокторинга — НЕ перехватываем
+//   if (params.get('start_exam') === '1') {
+//     console.log("⛔ Skip interception (return from proctoring)");
+//     return;
+//   }
+//
+//   const observer = new MutationObserver(() => {
+//     const btn = document.querySelector('[data-testid="start-exam-button"]');
+//
+//     if (btn && !btn.dataset.hooked) {
+//       btn.dataset.hooked = "true";
+//
+//       console.log("HOOKED BUTTON ✅");
+//
+//       btn.addEventListener(
+//         "click",
+//         (e) => {
+//           e.preventDefault();
+//           e.stopPropagation();
+//           e.stopImmediatePropagation();
+//
+//           console.log("REDIRECT TO PROCTORING 🚀");
+//
+//           const url = new URL(window.location.href);
+//           url.searchParams.set("start_exam", "1");
+//
+//           const params = new URLSearchParams({
+//               course_name: course?.title,
+//               unit_url: url.toString(),
+//               section_name: section_name
+//           });
+//
+//           window.location.href = `http://local.openedx.io/go-to-exam/?${params.toString()}`;
+//         },
+//         true
+//       );
+//     }
+//   });
+//
+//   observer.observe(document.body, { childList: true, subtree: true });
+//
+//   return () => observer.disconnect();
+// }, []);
+//   // Конец скрипта
 
   useEffect(() => {
     const celebrateFirstSection = celebrations && celebrations.firstSection;
