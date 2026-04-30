@@ -104,20 +104,43 @@ const Course = ({
 
 const location = useLocation();
 
-// 🔒 1. Блок кликов по навигации
+const startExamGuard = () => {
+  console.log('🚀 EXAM STARTED');
+
+  sessionStorage.setItem('exam_active', '1');
+  setIsExamActive(true);
+};
+
+const finishExamGuard = () => {
+  console.log('✅ EXAM FINISHED');
+
+  sessionStorage.removeItem('exam_active');
+  setIsExamActive(false);
+};
+
+// Восстанавливаем блокировку после reload / возврата с прокторинга
 useEffect(() => {
-  if (!isExamActive) return;
+  const active = sessionStorage.getItem('exam_active') === '1';
+
+  if (active) {
+    setIsExamActive(true);
+  }
+}, []);
+
+// 🔒 1. Блок кликов по навигации во время экзамена
+useEffect(() => {
+  if (!isExamActive) return undefined;
 
   const blockNavigation = (e) => {
     const link = e.target.closest('a');
 
     if (!link) return;
 
-    // разрешаем только ссылки внутри текущего sequential
+    // Разрешаем ссылки внутри текущего sequential
     if (!link.href.includes(sequenceId)) {
       e.preventDefault();
       e.stopPropagation();
-      console.log("🚫 Navigation click blocked");
+      console.log('🚫 Navigation click blocked');
     }
   };
 
@@ -128,34 +151,31 @@ useEffect(() => {
   };
 }, [isExamActive, sequenceId]);
 
-// 🔁 2. Контроль URL (если пользователь ушёл)
+// 🔁 2. Контроль URL: если пользователь ушёл из текущего exam sequence, возвращаем назад
 useEffect(() => {
   if (!isExamActive) return;
 
-  const path = location.pathname;
+  if (!location.pathname.includes(sequenceId)) {
+    console.log('🚫 Hard redirect to exam');
 
-  const match = path.match(/type@sequential\+block@([a-z0-9]+)/);
-  if (!match) return;
-
-  const currentSequential = match[1];
-
-  if (currentSequential !== sequenceId) {
-    console.log("🚫 Redirecting back to exam");
-
-    // возвращаем назад (текущий unit)
-    navigate(path, { replace: true });
+    navigate(
+      `/courseware/${courseId}/${sequenceId}`,
+      { replace: true },
+    );
   }
-}, [location.pathname, isExamActive, sequenceId]);
+}, [location.pathname, isExamActive, sequenceId, courseId, navigate]);
 
 // 🔙 3. Блок кнопки "назад"
 useEffect(() => {
-  console.log("isExamActive", isExamActive)
-  if (!isExamActive) return;
+  if (!isExamActive) return undefined;
 
   const handlePopState = () => {
-    console.log("🚫 Back button blocked");
+    console.log('🚫 Back button blocked');
 
-    navigate(location.pathname, { replace: true });
+    navigate(
+      `/courseware/${courseId}/${sequenceId}`,
+      { replace: true },
+    );
   };
 
   window.addEventListener('popstate', handlePopState);
@@ -163,59 +183,52 @@ useEffect(() => {
   return () => {
     window.removeEventListener('popstate', handlePopState);
   };
-}, [isExamActive, location.pathname]);
+}, [isExamActive, courseId, sequenceId, navigate]);
 
-// Test
-const allowedPath = `/courseware/${courseId}/`;
-
+// 🚀 4. Старт экзамена: включаем блокировку и запускаем существующий redirect в прокторинг
 useEffect(() => {
-  if (!isExamActive) return;
+  const params = new URLSearchParams(window.location.search);
 
-  if (!location.pathname.includes(sequenceId)) {
-    console.log("🚫 Hard redirect to exam");
+  // Если уже вернулись с прокторинга — НЕ перехватываем кнопку старта
+  if (params.get('start_exam') === '1') {
+    console.log('⛔ Skip interception (return from proctoring)');
 
-    navigate(
-      `/courseware/${courseId}/type@sequential+block@${sequenceId}`,
-      { replace: true }
-    );
+    // Но блокировку оставляем активной
+    startExamGuard();
+    return undefined;
   }
-}, [location.pathname, isExamActive, sequenceId, courseId]);
 
-
-useEffect(() => {
-  const active = sessionStorage.getItem("exam_active") === "1";
-  if (active) {
-    setIsExamActive(true);
-  }
-}, []);
-
-
-const finishExam = () => {
-  console.log("✅ EXAM FINISHED");
-
-  sessionStorage.removeItem("exam_active");
-  setIsExamActive(false);
-};
-
-useEffect(() => {
   const observer = new MutationObserver(() => {
     const btn = document.querySelector('[data-testid="start-exam-button"]');
 
     if (btn && !btn.dataset.hooked) {
-      btn.dataset.hooked = "true";
+      btn.dataset.hooked = 'true';
+
+      console.log('HOOKED BUTTON ✅');
 
       btn.addEventListener(
-        "click",
-        () => {
-          console.log("🚀 EXAM STARTED");
+        'click',
+        (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
 
-          // ✅ сохраняем состояние
-          sessionStorage.setItem("exam_active", "1");
+          startExamGuard();
 
-          // ✅ обновляем React state
-          setIsExamActive(true);
+          console.log('REDIRECT TO PROCTORING 🚀');
+
+          const url = new URL(window.location.href);
+          url.searchParams.set('start_exam', '1');
+
+          const paramsToSend = new URLSearchParams({
+            course_name: course?.title,
+            unit_url: url.toString(),
+            section_name,
+          });
+
+          window.location.href = `http://local.openedx.io/go-to-exam/?${paramsToSend.toString()}`;
         },
-        true
+        true,
       );
     }
   });
@@ -223,8 +236,40 @@ useEffect(() => {
   observer.observe(document.body, { childList: true, subtree: true });
 
   return () => observer.disconnect();
+}, [course?.title, section_name]);
+
+// 🏁 5. Завершение экзамена: снимаем блокировку и запускаем существующий redirect finish-exam
+useEffect(() => {
+  const observer = new MutationObserver(() => {
+    const btn = document.querySelector('[data-testid="end-exam-button"]');
+
+    if (btn && !btn.dataset.hookedFinish) {
+      btn.dataset.hookedFinish = 'true';
+
+      console.log('HOOKED FINISH BUTTON ✅');
+
+      btn.addEventListener('click', () => {
+        console.log('FINISH PROCTORING 🚀');
+
+        const redirectUrl = window.location.href;
+
+        // Даём submitExam выполниться
+        setTimeout(() => {
+          finishExamGuard();
+
+          window.location.href = `http://local.openedx.io/finish-exam/?redirectUrl=${encodeURIComponent(redirectUrl)}`;
+        }, 1500);
+      });
+    }
+  });
+
+  observer.observe(document.body, { childList: true, subtree: true });
+
+  return () => observer.disconnect();
 }, []);
+
 // === EXAM GUARD END ===
+
 //  useEffect(() => {
 //   const params = new URLSearchParams(window.location.search);
 //
