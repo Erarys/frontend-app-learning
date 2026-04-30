@@ -30,6 +30,7 @@ const Course = ({
   unitNavigationHandler,
   windowWidth,
 }) => {
+    const [isExamActive, setIsExamActive] = useState(false);
   console.log("Course.jsx WORKS with new code NoneStop👑👑👑");
   const course = useModel('coursewareMeta', courseId);
   const {
@@ -102,10 +103,6 @@ const Course = ({
 // === EXAM GUARD START ===
 
 const location = useLocation();
-
-// определяем активность экзамена
-const isExamActive =
-  new URLSearchParams(location.search).get('start_exam') === '1';
 
 // 🔒 1. Блок кликов по навигации
 useEffect(() => {
