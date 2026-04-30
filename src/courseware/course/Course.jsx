@@ -152,6 +152,7 @@ useEffect(() => {
 
 // 🔙 3. Блок кнопки "назад"
 useEffect(() => {
+  console.log("isExamActive", isExamActive)
   if (!isExamActive) return;
 
   const handlePopState = () => {
