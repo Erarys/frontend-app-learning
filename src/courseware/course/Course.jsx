@@ -226,7 +226,7 @@ useEffect(() => {
             section_name,
           });
 
-          window.location.href = `http://local.openedx.io/go-to-exam/?${paramsToSend.toString()}`;
+          window.location.href = `https://open.kaznu.kz/go-to-exam/?${paramsToSend.toString()}`;
         },
         true,
       );
@@ -257,7 +257,7 @@ useEffect(() => {
         setTimeout(() => {
           finishExamGuard();
 
-          window.location.href = `http://local.openedx.io/finish-exam/?redirectUrl=${encodeURIComponent(redirectUrl)}`;
+          window.location.href = `https://open.kaznu.kz/finish-exam/?redirectUrl=${encodeURIComponent(redirectUrl)}`;
         }, 1500);
       });
     }
