@@ -167,6 +167,65 @@ useEffect(() => {
   };
 }, [isExamActive, location.pathname]);
 
+// Test
+const allowedPath = `/courseware/${courseId}/`;
+
+useEffect(() => {
+  if (!isExamActive) return;
+
+  if (!location.pathname.includes(sequenceId)) {
+    console.log("🚫 Hard redirect to exam");
+
+    navigate(
+      `/courseware/${courseId}/type@sequential+block@${sequenceId}`,
+      { replace: true }
+    );
+  }
+}, [location.pathname, isExamActive, sequenceId, courseId]);
+
+
+useEffect(() => {
+  const active = sessionStorage.getItem("exam_active") === "1";
+  if (active) {
+    setIsExamActive(true);
+  }
+}, []);
+
+
+const finishExam = () => {
+  console.log("✅ EXAM FINISHED");
+
+  sessionStorage.removeItem("exam_active");
+  setIsExamActive(false);
+};
+
+useEffect(() => {
+  const observer = new MutationObserver(() => {
+    const btn = document.querySelector('[data-testid="start-exam-button"]');
+
+    if (btn && !btn.dataset.hooked) {
+      btn.dataset.hooked = "true";
+
+      btn.addEventListener(
+        "click",
+        () => {
+          console.log("🚀 EXAM STARTED");
+
+          // ✅ сохраняем состояние
+          sessionStorage.setItem("exam_active", "1");
+
+          // ✅ обновляем React state
+          setIsExamActive(true);
+        },
+        true
+      );
+    }
+  });
+
+  observer.observe(document.body, { childList: true, subtree: true });
+
+  return () => observer.disconnect();
+}, []);
 // === EXAM GUARD END ===
 //  useEffect(() => {
 //   const params = new URLSearchParams(window.location.search);
